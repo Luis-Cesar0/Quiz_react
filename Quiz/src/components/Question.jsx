@@ -1,13 +1,22 @@
 import { useContext } from 'react'
 import { QuizContext } from '../context/quiz'
 
+import Option from './Option'
+
 import '../components/Question.css'
 
 
 const Question = () => {
     const [quizState,dispatch] = useContext(QuizContext)
     const currentQuestion = quizState.questions[quizState.currentQuestion]
-    console.log(quizState)
+
+    const selectoption = (option) => {
+      dispatch({
+        type: 'CHECK_ANSWER',
+        playload: {answer: currentQuestion.answer, option}
+      })
+    }
+  
 
     
   return (
@@ -15,9 +24,18 @@ const Question = () => {
         <p>Pergutas {quizState.currentQuestion + 1} de {quizState.questions.length}</p>
         <h2>{currentQuestion.question}</h2>
         <div id="options-container">
-            <p>Opções</p>
+            {currentQuestion.options.map((option) =>(
+              <Option 
+              opction={option} 
+              key={option} 
+              answer={currentQuestion.answer}
+              selectOption={(() => selectoption(option))}
+              />
+            ))}
         </div>
-        <button onClick={() => dispatch({type:'CHANGE_QUESTION'})}>Continuar</button>
+        {quizState.answerSelected && (
+          <button onClick={() => dispatch({type:'CHANGE_QUESTION'})}>Continuar</button>
+        )}
     </div>
   )
 }
