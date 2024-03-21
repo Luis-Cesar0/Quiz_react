@@ -13,11 +13,10 @@ const Question = () => {
     const selectoption = (option) => {
       dispatch({
         type: 'CHECK_ANSWER',
-        playload: {answer: currentQuestion.answer, option}
+        payload: {answer: currentQuestion.answer, option}
       })
     }
   
-
     
   return (
     <div id='question'>
@@ -26,13 +25,20 @@ const Question = () => {
         <div id="options-container">
             {currentQuestion.options.map((option) =>(
               <Option 
-              opction={option} 
+              option={option} 
               key={option} 
               answer={currentQuestion.answer}
               selectOption={(() => selectoption(option))}
               />
             ))}
         </div>
+        {!quizState.answerSelected && (
+          <>
+          {currentQuestion.tip &&(
+            <button onClick={() => dispatch({type: 'SHOW_TIP'})}>Dica</button>
+          )}
+          </>
+        )}
         {quizState.answerSelected && (
           <button onClick={() => dispatch({type:'CHANGE_QUESTION'})}>Continuar</button>
         )}
