@@ -8,18 +8,20 @@ const initialState = {
     questions,
     currentQuestion: 0,
     score: 0,
-    answerSelected: false
+    answerSelected: false,
+    help: false,
+    optionTohide: null
 }
 
 const quizReducer = (state,action) =>{
     switch(action.type){
-        case "CHANGE_STATE":
+        case 'CHANGE_STATE':
 
             return {
                 ...state,
                 gameStage:STAGES[1],
             }
-        case "START_GAME": 
+        case 'START_GAME': 
             let quizQuestions = null  
             state.questions.forEach((question) =>{
                 
@@ -36,7 +38,7 @@ const quizReducer = (state,action) =>{
         
 
 
-        case "REORDER_QUESTIONS":
+        case 'REORDER_QUESTIONS':
            const reorderedQuestions = state.questions.sort(()=>{
             return Math.random() - 0.5;
            })
@@ -49,16 +51,17 @@ const quizReducer = (state,action) =>{
             const nexQuestion = state.currentQuestion + 1
             let endGame = false
 
-            if(!questions[nexQuestion]){
+            if(!state.questions[nexQuestion]){
                 endGame = true
             }
         return{
             ...state,
             currentQuestion: nexQuestion,
             gameStage: endGame ? STAGES[3]: state.gameStage,
-            answerSelected: false
+            answerSelected: false,
+            help: false
         }
-        case "NEW_GAME":
+        case 'NEW_GAME':
             return initialState
         
         case 'CHECK_ANSWER':
@@ -74,6 +77,29 @@ const quizReducer = (state,action) =>{
             score: state.score + correctAnswer,
             answerSelected: option,
         }
+        case 'SHOW_TIP':
+            return{
+                ...state,
+                help:'tip'
+            }
+        case 'REMOVE_OPTION':
+            const questionWinthoutopction = state.questions[state.currentQuestion]
+            
+            let repeat = true
+            let optionTohide
+
+            questionWinthoutopction.options.forEach((option) =>{
+                if(option !== questionWinthoutopction.answer && repeat){
+                    optionTohide = option
+                    console.log(optionTohide)
+                    repeat= false
+                }
+            })
+            return{
+                ...state,
+                optionTohide,
+                help:true
+            }
     
         default:
             return state   
